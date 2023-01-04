@@ -65,14 +65,21 @@ namespace RestaurantAPI.Services
                 throw new BadRequestException("Invalid username or password");
             }
 
+         //   int amountRestaurantCreatedByUser = HowManyRestaurantCreatedByUser(user.Id);
+
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
                 new Claim(ClaimTypes.Role, $"{user.Role.Name}"),
-                new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("yyyy-MM-dd")),
-                new Claim("Nationality",user.Nationality)
-            };
+                new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("yyyy-MM-dd"))
+             //   new Claim("AmountRestaurantCreatedByUser", amountRestaurantCreatedByUser.ToString())
+                  };
+            if (!string.IsNullOrEmpty(user.Nationality))
+            {
+                claims.Add(new Claim("Nationality", user.Nationality)
+                );
+            }
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtKey));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddDays(_authenticationSettings.JwtExpireDays);
@@ -85,5 +92,12 @@ namespace RestaurantAPI.Services
             var tokenHandler = new JwtSecurityTokenHandler();
             return tokenHandler.WriteToken(token);
         }
+
+        //public int HowManyRestaurantCreatedByUser(int userId)
+        //{
+        //    var amountRestaurantCreatedByUser = _context.Restaurants
+        //        .Count(r => r.CreatedById == userId);
+        //    return amountRestaurantCreatedByUser;
+        //}
     }
 }

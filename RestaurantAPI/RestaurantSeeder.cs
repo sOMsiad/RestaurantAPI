@@ -44,7 +44,7 @@ namespace RestaurantAPI
                 },
                 new Role()
                 {
-                    Name = "Maager"
+                    Name = "Manager"
                 },
                 new Role()
                 {
